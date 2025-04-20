@@ -1,5 +1,9 @@
+import logging
 from django.shortcuts import render
-from profiles.models import Profile
+from django.http import Http404
+from .models import Profile
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -13,9 +17,15 @@ def index(request):
     :return: The rendered page with the list of profiles.
     :rtype: HttpResponse
     """
-    profiles_list = Profile.objects.all()
-    context = {'profiles_list': profiles_list}
-    return render(request, 'profiles/index.html', context)
+    try:
+        logger.info('Accessing profiles index page')
+        profiles_list = Profile.objects.all()
+        logger.debug(f'Found {len(profiles_list)} profiles')
+        context = {'profiles_list': profiles_list}
+        return render(request, 'profiles/index.html', context)
+    except Exception as e:
+        logger.error(f'Error retrieving profiles list: {str(e)}', exc_info=True)
+        raise
 
 
 def profile(request, username):
@@ -31,7 +41,20 @@ def profile(request, username):
     :type username: str
     :return: The rendered page with the profile details.
     :rtype: HttpResponse
+    :raises Http404: If no profile matches the provided username.
     """
-    profile = Profile.objects.get(user__username=username)
-    context = {'profile': profile}
-    return render(request, 'profiles/profile.html', context)
+    try:
+        logger.info(f'Accessing profile detail page for username: {username}')
+        profile = Profile.objects.get(user__username=username)
+        logger.debug(f'Retrieved profile for user: {username}')
+        context = {'profile': profile}
+        return render(request, 'profiles/profile.html', context)
+    except Profile.DoesNotExist:
+        logger.warning(f'Profile not found with username: {username}')
+        raise Http404("Profile does not exist")
+    except Exception as e:
+        logger.error(
+            f'Error retrieving profile for username {username}: {str(e)}',
+            exc_info=True
+        )
+        raise

@@ -14,7 +14,10 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.12.3]
-
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.12.3
@@ -34,8 +37,7 @@ jobs:
     - name: Run tests
       env:
         DJANGO_SETTINGS_MODULE: oc_lettings_site.settings
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
       run: |
         pytest
 

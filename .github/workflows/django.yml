@@ -39,3 +39,6 @@ jobs:
 
       - name: Collect static files
         run: python manage.py collectstatic --noinput
+
+      - name: Build Docker image
+        run: docker build -t oc-lettings-site .

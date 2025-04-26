@@ -38,8 +38,16 @@ jobs:
       - name: Run tests with coverage
         if: success()
         run: |
-          pytest --cov=. --cov-report=xml
+          pytest --cov=.
+          coverage html
           coverage report --fail-under=80
+      
+      - name: Archive code coverage results
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: htmlcov/
 
       - name: Collect static files
         if: success()

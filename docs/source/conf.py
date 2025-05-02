@@ -1,8 +1,8 @@
 import os
 import sys
+import django
 sys.path.insert(0, os.path.abspath('../..'))
 
-import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'oc_lettings_site.settings')
 django.setup()
 
@@ -30,8 +30,6 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = []
-
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
